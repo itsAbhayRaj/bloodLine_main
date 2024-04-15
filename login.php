@@ -27,7 +27,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($stmt->num_rows > 0) {
         $stmt->bind_result($hashedPassword);
         $stmt->fetch();
-
         // Verify the password
         if (password_verify($password, $hashedPassword)) {
             // Password is correct, set session or do any other action
@@ -44,10 +43,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: dashboard.php");
             exit();
         } else {
-            echo '<script>alert("Incorrect email or password. Please try again.");</script>';
+            echo '<script>alert("Incorrect email or password. Please try again2.");</script>';
         }
     } else {
-        echo '<script>alert("Incorrect email or password. Please try again.");</script>';
+        echo '<script>alert("Incorrect email or password. Please try again.1");</script>';
     }
     $stmt->close();
     $conn->close();
@@ -201,7 +200,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <nav class="navbar container" data-navbar>
           <ul class="navbar-list">
             <li>
-              <a href="index.html" class="navbar-link" data-nav-link>Home</a>
+              <a href="index.php" class="navbar-link" data-nav-link>Home</a>
             </li>
             <li>
               <a href="#service" class="navbar-link" data-nav-link>Find donor</a>

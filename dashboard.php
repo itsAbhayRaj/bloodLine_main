@@ -288,7 +288,7 @@ $conn->close();
         <nav class="navbar container" data-navbar>
           <ul class="navbar-list">
             <li>
-              <a href="index.html" class="navbar-link" data-nav-link>Home</a>
+              <a href="index.php" class="navbar-link" data-nav-link>Home</a>
             </li>
             <li>
               <a href="#service" class="navbar-link" data-nav-link>Find donor</a>

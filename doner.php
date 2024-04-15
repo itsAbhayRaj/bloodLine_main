@@ -1,3 +1,56 @@
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Validate and sanitize form inputs
+    $name = isset($_POST["name"]) ? htmlspecialchars($_POST["name"]) : "";
+    $phone = isset($_POST["phone"]) ? htmlspecialchars($_POST["phone"]) : "";
+    $email = isset($_POST["email"]) ? htmlspecialchars($_POST["email"]) : "";
+    $bloodgroup = isset($_POST["blood-type"]) ? htmlspecialchars($_POST["blood-type"]) : "";
+    $city = isset($_POST["city"]) ? htmlspecialchars($_POST["city"]) : "";
+    $state = isset($_POST["state"]) ? htmlspecialchars($_POST["state"]) : "";
+
+    $servername = "localhost";
+    $username = "root";
+    $dbpassword = "";
+    $dbname = "bloodline_db";
+    $conn = new mysqli($servername, $username, $dbpassword, $dbname);
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+    $stmt = $conn->prepare("INSERT INTO recipients (name,  phone, email, blood_type,  city, state) VALUES (?, ?, ?, ?, ?, ?)" );
+    if (!$stmt) {
+        die("Error: " . $conn->error);
+    }
+    $stmt->bind_param("ssssss", $name, $phone,$email, $bloodgroup, $city, $state);
+    if ($stmt->execute()) {
+        echo '<script>alert("Recipients Added successfully!");</script>';
+    } else {
+        echo '<script>alert("Error: Unable to register. Please try again later.");</script>';
+    }
+
+    echo '<script>alert(" helo !");</script>';
+
+    $sql = "SELECT * FROM registered_users WHERE bloodgroup = '$bloodgroup'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+    $donors = array();
+    while($row = $result->fetch_assoc()) {
+        $donors[] = $row;
+    }
+    session_start();
+    $_SESSION['donors'] = $donors;
+
+    header("Location: donorlist.php");
+    exit();
+    } else {
+        echo "No matching donors found1.";
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -97,10 +150,10 @@
         <nav class="navbar container" data-navbar>
           <ul class="navbar-list">
             <li>
-              <a href="index.html" class="navbar-link" data-nav-link>Home</a>
+              <a href="index.php" class="navbar-link" data-nav-link>Home</a>
             </li>
             <li>
-              <a href="#service" class="navbar-link" data-nav-link>Find donor</a>
+              <a href="doner.php" class="navbar-link" data-nav-link>Find donor</a>
             </li>
             <li>
               <a href="#about" class="navbar-link" data-nav-link>About Us</a>
@@ -124,39 +177,14 @@
 
   <main>
     <article>
-      <!--HERO-->
-      <section class="section hero" id="home" style="background-image: url('./assets/images/hero-bg.png')"
-        aria-label="hero">
-        <div class="container">
-          <div class="hero-content">
-            <img src="assets/images/blood-icon.png" alt="ICON" width="70" height="70"> 
-            <p class="section-subtitle">Welcome To Blood Line</p>
-            <h1 class="h1 hero-title">Connecting The Donors...</h1>
-            <p class="hero-text">
-              Our mission is to bridge the gap between blood donors and recipients, providing a seamless and efficient experience for both parties.
-              You can trust us,
-              we provide the best service...
-            </p>
-            <form action="" class="hero-form" method="POST">
-              <input type="email" name="email_address" aria-label="email" placeholder="Your Email Address..." required
-                class="email-field">
-              <button type="submit" class="btn">Get Response Back</button>
-            </form>
-          </div>
-          <figure class="hero-banner">
-            <img src="./assets/images/hero-banner.png" width="587" height="839" alt="hero banner" class="w-100">
-          </figure>
-        </div>
-      </section>
-
+     
       <!--SERVICE-->
 <section class="section service" id="service" aria-label="service">
   <div class="container">
     <p class="section-subtitle text-center">Find the best Donor For You</p>
     <h2 class="h2 section-title text-center">FIND DONOR</h2>
 
-    <!-- Replace the existing content with your form -->
-    <form class="donor-form">
+    <form class="donor-form" action="#" method="POST">
       <div class="form-group">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
